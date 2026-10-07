@@ -2,14 +2,43 @@
 
 import { useEffect, useRef, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { ArrowLeft, Search } from "lucide-react";
+import { Search, ChevronDown } from "lucide-react";
 import { Link } from "react-router";
+
+const SERVICE_CATEGORIES = [
+  "All Services",
+  "Celebrations",
+  "Festivals",
+  "Corporate & Business",
+  "Romance",
+  "Gifts & Surprises",
+  "Entertainment & Catering",
+];
+
+// Maps each service title to its browse category (no duplicated service data)
+const SERVICE_CATEGORY_BY_TITLE = {
+  "Birthday Decoration": "Celebrations",
+  "Anniversary Decoration": "Celebrations",
+  "Baby Shower": "Celebrations",
+  "Welcome Baby Decoration": "Celebrations",
+  "House Warming Decorations": "Celebrations",
+  "Baby Naming Ceremony": "Celebrations",
+  "Haldi Decoration": "Celebrations",
+  "Festivals Decoration": "Festivals",
+  "Corporate Events": "Corporate & Business",
+  "Exhibition Stall Design Services": "Corporate & Business",
+  "Romantic Candlelight Dinners": "Romance",
+  "Personal Gifts & Surprises": "Gifts & Surprises",
+  "Party Entertainment & Games": "Entertainment & Catering",
+  "Catering Services": "Entertainment & Catering",
+  "Corporate & B2B Event Services": "Corporate & Business",
+};
 
 const SERVICE_GROUPS = [
   {
     title: "Birthday Decoration",
     description: "Signature moments for every age.",
-    detailedDescription: "Transform birthdays into unforgettable celebrations with our bespoke decoration services. Whether it's a child's first birthday or a milestone adult celebration, we craft personalized themes that reflect the guest of honor's personality. From whimsical kids' parties with vibrant colors and playful elements to sophisticated adult gatherings with elegant floral arrangements and ambient lighting, every detail is meticulously planned. Our terrace party setups offer stunning outdoor experiences, while first birthday post-marriage celebrations blend traditional warmth with contemporary elegance.",
+    detailedDescription: "Turn birthdays into unforgettable celebrations with personalized themes, from playful kids’ parties to elegant adult gatherings. We create everything from terrace setups to traditional-meets-modern celebrations.",
     items: [
       "Kids' Birthdays",
       "Adults' Birthdays",
@@ -20,7 +49,7 @@ const SERVICE_GROUPS = [
   {
     title: "Anniversary Decoration",
     description: "Celebrate milestones in style.",
-    detailedDescription: "Mark life's most precious milestones with our exquisite anniversary decoration services. From intimate silver and gold jubilee celebrations that honor decades of togetherness to grand banquet setups that accommodate extended families, we create atmospheres that speak to your journey. Our candlelight dinner arrangements transform ordinary spaces into romantic sanctuaries, perfect for rekindling love. Every setup is designed to evoke emotion, celebrate achievements, and create new memories that will be cherished for years to come.",
+    detailedDescription: "Celebrate your journey with beautifully styled anniversary setups, from intimate candlelight dinners to elegant silver and gold jubilee celebrations. Every detail is designed to make the milestone memorable.",
     items: [
       "Silver & Gold Jubilee Celebrations",
       "Banquet Setups",
@@ -30,79 +59,79 @@ const SERVICE_GROUPS = [
   {
     title: "Baby Shower",
     description: "Curated themes and styling for expectant parents.",
-    detailedDescription: "Welcome the newest addition to your family with a beautifully curated baby shower celebration. We specialize in creating warm, inviting atmospheres that celebrate the joy of impending parenthood. From gender-neutral themes with soft pastels to vibrant themed parties, our designs honor both traditional and modern preferences. Every element—from delicate floral arrangements to custom signage and themed decorations—is thoughtfully selected to create a memorable experience for expectant parents and their loved ones.",
+    detailedDescription: "Celebrate parenthood with beautifully styled baby showers, featuring personalized themes, soft décor, florals, and thoughtful details for a warm and memorable celebration.",
     items: [],
   },
   {
     title: "Welcome Baby Decoration",
     description: "Heartfelt welcomes for little stars.",
-    detailedDescription: "Celebrate the arrival of your little one with heartfelt welcome decorations that create a warm, nurturing environment. Whether you're welcoming the baby at home with a cozy, intimate setup or at the hospital with a tasteful arrangement that respects medical facility guidelines, we ensure every detail reflects your joy. Our designs incorporate soft colors, gentle lighting, and personalized touches that make the first days special. From custom name displays to themed room decorations, we help you create a beautiful first impression for your newest family member.",
+    detailedDescription: "Welcome your little one with warm, personalized decorations at home or in the hospital. From soft colors and lighting to custom name displays, we make those first moments extra special.",
     items: ["At Home", "At Hospital"],
   },
   {
     title: "House Warming Decorations",
     description: "Warmth and tradition in every detail.",
-    detailedDescription: "Bless your new home with our traditional and modern house warming decoration services. Our Griha Pravesh setups honor ancient customs while incorporating contemporary design elements, creating spaces that feel both sacred and welcoming. We offer floral arrangements that symbolize prosperity, traditional rangoli designs, and elegant lighting that transforms your new space into a celebration of new beginnings. Whether you prefer traditional Indian aesthetics or a blend of cultural elements, we create decorations that honor your heritage while reflecting your personal style.",
+    detailedDescription: "Celebrate your new home with elegant Griha Pravesh décor blending traditional elements with modern styling. From rangoli and florals to festive lighting, we create a welcoming space for new beginnings.",
     items: ["Griha Pravesh", "Floral & Traditional"],
   },
   {
     title: "Baby Naming Ceremony",
     description: "Cherish the first celebration.",
-    detailedDescription: "Mark your child's naming ceremony with decorations that honor this significant cultural milestone. We offer both Western and Indian themed setups, each designed to create a meaningful atmosphere for this important ritual. Our Western themes feature elegant, minimalist designs with soft colors and sophisticated floral arrangements, while our Indian themes incorporate traditional elements like marigold garlands, auspicious symbols, and vibrant color palettes. Every setup is customized to reflect your family's traditions and preferences, ensuring the ceremony is both beautiful and meaningful.",
+    detailedDescription: "Celebrate your child’s naming ceremony with beautifully styled Western or Indian themes. Each setup blends meaningful traditions with personalized décor for a memorable occasion.",
     items: ["Western Themes", "Indian Themes"],
   },
   {
     title: "Haldi Decoration",
     description: "Vibrant rituals with a modern twist.",
-    detailedDescription: "Celebrate the vibrant Haldi ceremony with our stunning decoration services that honor tradition while embracing contemporary design. Our traditional decor options feature classic yellow and green color schemes with marigold flowers, turmeric arrangements, and traditional motifs that create an authentic festive atmosphere. For those seeking something unique, our quirky and theme-based decorations offer creative interpretations that maintain the ceremony's essence while adding modern flair. From intimate family gatherings to larger celebrations, we create spaces that are both photogenic and meaningful.",
+    detailedDescription: "Bring your Haldi ceremony to life with vibrant traditional décor or creative theme-based setups. We blend festive colors, florals, and modern styling for a celebration that feels both meaningful and photogenic.",
     items: ["Traditional Decor", "Quirky / Theme Decor"],
   },
   {
     title: "Festivals Decoration",
     description: "Transform festive spaces with elegance.",
-    detailedDescription: "Bring the spirit of every festival to life with our comprehensive decoration services. Whether it's the warm glow of Diwali with intricate rangoli designs and diya arrangements, the festive cheer of Christmas with elegant tree decorations and ambient lighting, or the vibrant colors of Holi and Ganesh Chaturthi, we create atmospheres that honor each festival's unique essence. Our Raksha Bandhan setups celebrate sibling bonds, while New Year decorations usher in fresh beginnings with style. Each festival setup is designed to create lasting memories while respecting cultural traditions.",
+    detailedDescription: "Bring every festival to life with thoughtfully designed décor that captures its unique spirit. From Diwali and Christmas to Holi, Ganesh Chaturthi, and New Year celebrations, we create festive spaces worth remembering.",
     items: ["Diwali", "Christmas", "Raksha Bandhan", "Holi", "Ganesh", "New Year"],
   },
   {
     title: "Corporate Events",
     description: "Impress stakeholders effortlessly.",
-    detailedDescription: "Elevate your corporate presence with our professional event decoration and management services. From company anniversaries that celebrate milestones to employee recognition events that boost morale, we understand the importance of creating the right atmosphere for business occasions. Our product launch setups are designed to make a statement, while team-building event decorations create engaging environments that foster collaboration. Every corporate event is executed with precision, professionalism, and attention to detail that reflects your brand's values and impresses stakeholders at every level.",
+    detailedDescription: "Create polished corporate events with professional décor designed around your brand and occasion. From launches and anniversaries to employee events and team-building, we handle every detail with precision.",
     items: ["Anniversaries", "Employee Recognition", "Product Launches", "Team-building"],
   },
   {
     title: "Exhibition Stall Design Services",
     description: "Immersive experiences that attract and engage.",
-    detailedDescription: "Stand out at trade shows and exhibitions with our innovative stall design services. We create immersive brand experiences that attract visitors and leave lasting impressions. Our designs combine strategic layout planning, eye-catching visual elements, and functional spaces that facilitate meaningful interactions. From modular setups that can be adapted across multiple events to custom installations that tell your brand story, we ensure your exhibition presence is both memorable and effective. Every stall is designed to maximize engagement, showcase your products or services, and create opportunities for meaningful business connections.",
+    detailedDescription: "Make your brand stand out with exhibition stalls designed for maximum impact. We combine smart layouts, striking visuals, and functional spaces to attract visitors and create meaningful connections.",
     items: [],
   },
   {
     title: "Romantic Candlelight Dinners",
     description: "Intimate escapes crafted for two.",
-    detailedDescription: "Create unforgettable romantic moments with our intimate candlelight dinner setups. Whether you're celebrating an anniversary, proposing, or simply wanting to create a special evening, we transform ordinary spaces into romantic sanctuaries. Our rooftop setups offer stunning city views under the stars, while poolside arrangements create a tropical, intimate atmosphere. For those seeking ultimate privacy and luxury, our cabana setups provide secluded, elegantly decorated spaces. Every arrangement features carefully curated lighting, floral accents, and atmospheric details that set the perfect mood for romance and connection.",
+    detailedDescription: "Turn any space into a romantic escape with beautifully styled candlelight dinners. Choose from rooftop, poolside, or private cabana setups with curated lighting, florals, and intimate details.",
     items: ["Rooftop", "Poolside", "Cabana Setups"],
   },
   {
     title: "Personal Gifts & Surprises",
     description: "Thoughtful gestures made memorable.",
-    detailedDescription: "Express your love and appreciation with our personalized gift and surprise services. Our explosion boxes are intricately designed, multi-layered creations that reveal photos, messages, and mementos in a delightful unfolding experience. Custom photo frames capture precious moments in elegant, personalized designs that become cherished keepsakes. Our gift hampers are thoughtfully curated collections of premium items, beautifully packaged and presented. Whether it's a birthday surprise, anniversary gift, or a gesture of appreciation, we help you create moments that show how much you care.",
+    detailedDescription: "Make someone’s day unforgettable with personalized gifts and surprises. From explosion boxes and custom photo frames to curated gift hampers, every detail is designed to feel personal.",
     items: ["Explosion Boxes", "Photo Frames", "Gift Hampers"],
   },
   {
     title: "Party Entertainment & Games",
     description: "Keep guests delighted all evening.",
-    detailedDescription: "Elevate your event with our comprehensive entertainment services that keep guests engaged and delighted throughout the celebration. Our live music performances feature talented artists who create the perfect ambiance for any occasion. Professional DJs bring energy and rhythm to dance floors, ensuring the party never stops. Magic shows captivate audiences of all ages, while caricature artists create personalized keepsakes that guests treasure. Dance shows add cultural flair and visual spectacle. Every entertainment option is carefully selected to match your event's theme and audience, ensuring a memorable experience for everyone.",
+    detailedDescription: "Keep your celebration lively with entertainment for every kind of crowd. From live music and DJs to magic, caricatures, and dance performances, we help make every moment memorable.",
     items: ["Live Music", "DJs", "Magic Shows", "Caricature Artists", "Dance Shows"],
   },
   {
     title: "Catering Services",
     description: "Flavours curated for every palate.",
-    detailedDescription: "Delight your guests with our exceptional catering services that combine culinary excellence with impeccable presentation. Our custom menus are designed in collaboration with you, ensuring every dish reflects your preferences and dietary requirements. From traditional favorites to international cuisines, we offer diverse options that satisfy every palate. Our dessert bars are works of art, featuring an array of sweet treats beautifully displayed and perfectly executed. Our beverage services include everything from signature cocktails to non-alcoholic options, all served with style and attention to detail that matches the quality of your event.",
+    detailedDescription: "Delight your guests with customized menus, beautifully presented desserts, and refreshing beverages. From traditional favorites to international flavors, we tailor the experience to your event.",
     items: ["Custom Menus", "Dessert Bars", "Beverages"],
   },
   {
     title: "Corporate & B2B Event Services",
     description: "All-in-one experiential solutions.",
-    detailedDescription: "Streamline your corporate event planning with our comprehensive B2B services that cover every aspect of professional gatherings. Our decor and audiovisual services ensure your event looks and sounds perfect, with professional lighting, sound systems, and visual presentations that enhance your message. Our photography services capture every important moment with professional quality. Corporate hampers and branded merchandise create lasting impressions and strengthen business relationships. We handle every detail, from initial planning to execution, ensuring your corporate events run smoothly and leave a professional, polished impression on all attendees.",
+    detailedDescription: "From décor and audiovisuals to photography, corporate hampers, and branded merchandise, we handle the details that make business events feel polished and professional.",
     items: ["Decor & Audiovisual", "Photographers", "Corporate Hampers", "Branded Merchandise"],
   },
 ];
@@ -277,15 +306,24 @@ const matchesSearch = (service, searchQuery) => {
 export default function ServicesPage() {
   const sectionRefs = useRef([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All Services");
+  const [scrollY, setScrollY] = useState(0);
 
-  // Filter services based on search query
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Filter by category and search query (both applied when active)
   const filteredServices = useMemo(() => {
-    if (!searchQuery.trim()) {
-      return SERVICE_GROUPS;
-    }
-    const filtered = SERVICE_GROUPS.filter(service => matchesSearch(service, searchQuery));
-    return filtered;
-  }, [searchQuery]);
+    return SERVICE_GROUPS.filter((service) => {
+      const matchesCategory =
+        selectedCategory === "All Services" ||
+        SERVICE_CATEGORY_BY_TITLE[service.title] === selectedCategory;
+      return matchesCategory && matchesSearch(service, searchQuery);
+    });
+  }, [searchQuery, selectedCategory]);
 
   // Intersection Observer for fade-in animations
   useEffect(() => {
@@ -316,24 +354,62 @@ export default function ServicesPage() {
       className="min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-gradient-to-b from-[#0B0B0D] via-[#0B0B0D] to-[#0B0B0D] text-[#F5EDED]"
       style={{ fontFamily: "'Lato', sans-serif", scrollBehavior: "smooth" }}
     >
-      {/* Header */}
-      <header className="fixed top-0 w-full z-50 bg-[#0B0B0D]/95 shadow-lg shadow-[#0B0B0D]/50 backdrop-blur-sm">
+      {/* Header — matches Contact/Gallery secondary-page navbar */}
+      <header
+        className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+          scrollY > 50
+            ? "bg-[#0B0B0D]/95 shadow-lg shadow-[#0B0B0D]/50 backdrop-blur-sm"
+            : "bg-transparent"
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
-            <Link
-              to="/"
-              className="flex items-center gap-3 text-[#DC9B78] hover:text-[#F5EDED] transition-colors duration-300"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              <span className="text-sm font-semibold">Back to Home</span>
-            </Link>
-            <h1
-              className="text-xl md:text-2xl text-[#DC9B78] font-bold tracking-wide"
-              style={{ fontFamily: "'Playfair Display', serif" }}
-            >
-              The Eventopia
-            </h1>
-            <div className="w-24"></div> {/* Spacer for centering */}
+            {/* Logo */}
+            <div className="flex-shrink-0">
+              <Link to="/">
+                <h1
+                  className="text-xl md:text-2xl text-[#DC9B78] font-bold tracking-wide transition-colors duration-300"
+                  style={{ fontFamily: "'Playfair Display', serif" }}
+                >
+                  The Eventopia
+                </h1>
+              </Link>
+            </div>
+
+            {/* Desktop Navigation */}
+            <nav className="hidden lg:flex items-center justify-center flex-1 gap-10">
+              <Link
+                to="/services"
+                className="text-[#F5EDED] transition-all duration-300 relative pb-2 group"
+              >
+                <span className="text-xl font-semibold tracking-wide">Services</span>
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-[#DC9B78] transition-all duration-300"></span>
+              </Link>
+              <Link
+                to="/contact"
+                className="text-[#DC9B78] hover:text-[#F5EDED] transition-all duration-300 relative pb-2 group"
+              >
+                <span className="text-xl font-semibold tracking-wide">Contact</span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#DC9B78] group-hover:w-full transition-all duration-300"></span>
+              </Link>
+              <Link
+                to="/gallery"
+                className="text-[#DC9B78] hover:text-[#F5EDED] transition-all duration-300 relative pb-2 group"
+              >
+                <span className="text-xl font-semibold tracking-wide">Gallery</span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#DC9B78] group-hover:w-full transition-all duration-300"></span>
+              </Link>
+            </nav>
+
+            {/* Right Side */}
+            <div className="flex items-center space-x-4">
+              <Link
+                to="/contact"
+                className="hero-button-gradient hero-shine-animation px-6 py-2 rounded-full font-semibold text-sm hover:shadow-[0_0_20px_rgba(220,155,120,0.4)] transition-all duration-300 book-now-pulse"
+              >
+                Book Now
+              </Link>
+            </div>
           </div>
         </div>
       </header>
@@ -368,7 +444,7 @@ export default function ServicesPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mb-12"
+            className="mb-4 md:mb-6"
           >
             <div className="relative w-full md:w-[60%] lg:w-[55%] mx-auto px-4 md:px-0">
               <div className="relative">
@@ -402,6 +478,44 @@ export default function ServicesPage() {
                     </svg>
                   </button>
                 )}
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Category Filter */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.25 }}
+            className="mb-10 md:mb-12"
+          >
+            <div className="relative w-full md:w-[60%] lg:w-[55%] mx-auto px-4 md:px-0">
+              <label
+                htmlFor="service-category"
+                className="block text-xs uppercase tracking-[0.25em] text-[#DC9B78]/70 mb-2 text-center md:text-left"
+              >
+                Browse by category
+              </label>
+              <div className="relative">
+                <select
+                  id="service-category"
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="w-full appearance-none pl-6 pr-12 py-4 rounded-full bg-[#0B0B0D]/80 border border-[#DC9B78]/30 text-[#F5EDED] focus:outline-none focus:border-[#DC9B78]/60 focus:ring-2 focus:ring-[#DC9B78]/20 transition-all duration-300 shadow-[0_10px_30px_rgba(0,0,0,0.3)] hover:border-[#DC9B78]/40 cursor-pointer"
+                  style={{ fontFamily: "'Lato', sans-serif" }}
+                  aria-label="Browse by category"
+                >
+                  {SERVICE_CATEGORIES.map((category) => (
+                    <option
+                      key={category}
+                      value={category}
+                      className="bg-[#0B0B0D] text-[#F5EDED]"
+                    >
+                      {category}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-4 top-1/2 transform -translate-y-1/2 text-[#DC9B78] w-5 h-5" />
               </div>
             </div>
           </motion.div>
@@ -484,7 +598,7 @@ export default function ServicesPage() {
                   No matching services found
                 </p>
                 <p className="text-sm text-[#E6D9CF]/40">
-                  Try searching with different keywords like "birthday", "wedding", "corporate", or "baby"
+                  Try a different search or switch the category back to &quot;All Services&quot;
                 </p>
               </motion.div>
             )}
@@ -550,6 +664,19 @@ export default function ServicesPage() {
         
         .hero-shine-animation {
           animation: shine 6s linear infinite;
+        }
+
+        @keyframes gentlePulse {
+          0%, 100% {
+            box-shadow: 0 0 0 0 rgba(220, 155, 120, 0.4);
+          }
+          50% {
+            box-shadow: 0 0 15px 5px rgba(220, 155, 120, 0.3);
+          }
+        }
+
+        .book-now-pulse {
+          animation: gentlePulse 3s ease-in-out infinite;
         }
         
         * {

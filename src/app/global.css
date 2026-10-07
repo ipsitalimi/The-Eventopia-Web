@@ -1,3 +1,5 @@
+@import "react-day-picker/style.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -30,64 +32,147 @@
   }
 }
 
-/* React Day Picker Custom Styling */
-.rdp {
-  --rdp-cell-size: 90px;
+/* React Day Picker v9 — Eventopia minimal thin-line calendar */
+.rdp-root,
+.eventopia-day-picker.rdp-root {
   --rdp-accent-color: #DC9B78;
-  --rdp-background-color: #1C1C20;
-  --rdp-accent-color-dark: #DC9B78;
-  --rdp-outline: 2px solid var(--rdp-accent-color);
-  --rdp-outline-selected: 3px solid var(--rdp-accent-color);
+  --rdp-accent-background-color: rgba(220, 155, 120, 0.18);
+  --rdp-today-color: #DC9B78;
+  --rdp-day-height: 36px;
+  --rdp-day-width: 36px;
+  --rdp-day_button-height: 34px;
+  --rdp-day_button-width: 34px;
+  --rdp-day_button-border-radius: 4px;
+  --rdp-day_button-border: 1px solid transparent;
+  --rdp-selected-border: 1px solid #DC9B78;
+  --rdp-disabled-opacity: 0.45;
+  --rdp-outside-opacity: 0.4;
+  --rdp-nav_button-height: 1.75rem;
+  --rdp-nav_button-width: 1.75rem;
+  --rdp-nav-height: 2.25rem;
+  --rdp-weekday-padding: 0.35rem 0;
+  --rdp-range_start-color: #F5EDED;
+  --rdp-range_end-color: #F5EDED;
+  --rdp-range_middle-color: #F5EDED;
+  color: #F5EDED !important;
   margin: 0;
+  font-family: "Lato", sans-serif;
+  font-size: 0.875rem;
 }
 
-.rdp-month {
-  padding: 4px;
+/* Force cream/peach text — never inherit black from popover/theme defaults */
+.rdp-root,
+.rdp-root *,
+.eventopia-day-picker,
+.eventopia-day-picker * {
+  color: inherit;
 }
 
-.rdp-table {
-  border-spacing: 10px;
+.rdp-root .rdp-month_caption,
+.rdp-root .rdp-caption_label,
+.rdp-root .rdp-dropdowns,
+.rdp-root .rdp-months_dropdown,
+.rdp-root .rdp-years_dropdown {
+  color: #DC9B78 !important;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
 }
 
-.rdp-day {
-  color: #F5EDED;
+.rdp-root .rdp-weekday {
+  color: rgba(230, 217, 207, 0.8) !important;
+  font-weight: 500;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 1;
 }
 
-.rdp-day:hover:not([disabled]):not(.rdp-day_selected) {
-  background-color: rgba(220, 155, 120, 0.2);
+.rdp-root .rdp-day {
+  color: #F5EDED !important;
 }
 
-.rdp-day_selected,
-.rdp-day_selected:focus-visible,
-.rdp-day_selected:hover {
-  background-color: #DC9B78;
-  color: #0B0B0D;
+.rdp-root .rdp-day_button {
+  color: #F5EDED !important;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.rdp-root .rdp-day_button:hover:not(:disabled):not([aria-disabled="true"]) {
+  background-color: rgba(220, 155, 120, 0.16);
+  border-color: rgba(220, 155, 120, 0.45);
+  color: #F5EDED !important;
+}
+
+.rdp-root .rdp-today:not(.rdp-outside) .rdp-day_button {
+  border-color: rgba(220, 155, 120, 0.55);
+  color: #DC9B78 !important;
   font-weight: 600;
 }
 
-.rdp-day_today {
-  background-color: rgba(220, 155, 120, 0.2);
-  color: #DC9B78;
+.rdp-root .rdp-selected .rdp-day_button,
+.rdp-root .rdp-selected .rdp-day_button:hover,
+.rdp-root .rdp-selected .rdp-day_button:focus-visible {
+  background-color: #DC9B78 !important;
+  border: 1px solid #DC9B78 !important;
+  color: #F5EDED !important;
   font-weight: 600;
 }
 
-.rdp-caption_label {
-  color: #DC9B78;
-  font-weight: 600;
+.rdp-root .rdp-disabled,
+.rdp-root .rdp-disabled .rdp-day_button,
+.rdp-root .rdp-disabled .rdp-day_button:hover {
+  color: rgba(230, 217, 207, 0.5) !important;
+  opacity: 1;
+  background-color: transparent !important;
+  border-color: transparent !important;
 }
 
-.rdp-head_cell {
-  color: rgba(230, 217, 207, 0.7);
+.rdp-root .rdp-outside .rdp-day_button {
+  color: rgba(230, 217, 207, 0.4) !important;
 }
 
-.rdp-button_previous,
-.rdp-button_next {
-  color: #DC9B78;
+.rdp-root .rdp-button_previous,
+.rdp-root .rdp-button_next {
+  color: #DC9B78 !important;
+  border: 1px solid rgba(220, 155, 120, 0.35);
+  border-radius: 4px;
+  background: transparent;
 }
 
-.rdp-button_previous:hover:not([disabled]),
-.rdp-button_next:hover:not([disabled]) {
-  background-color: rgba(220, 155, 120, 0.2);
+.rdp-root .rdp-button_previous:hover:not(:disabled):not([aria-disabled="true"]),
+.rdp-root .rdp-button_next:hover:not(:disabled):not([aria-disabled="true"]) {
+  background-color: rgba(220, 155, 120, 0.16);
+  border-color: rgba(220, 155, 120, 0.55);
+  color: #E8BFA0 !important;
+}
+
+.rdp-root .rdp-chevron {
+  fill: #DC9B78 !important;
+}
+
+.rdp-root .rdp-month_grid {
+  border-collapse: separate;
+  border-spacing: 2px;
+}
+
+.rdp-root .rdp-footer,
+.rdp-root .rdp-dropdown_root,
+.rdp-root option {
+  color: #F5EDED !important;
+  background-color: #1C1C20;
+}
+
+@media (max-width: 480px) {
+  .rdp-root,
+  .eventopia-day-picker.rdp-root {
+    --rdp-day-height: 34px;
+    --rdp-day-width: 34px;
+    --rdp-day_button-height: 32px;
+    --rdp-day_button-width: 32px;
+    font-size: 0.8125rem;
+  }
 }
 
 /* Popover/Dropdown Animations */

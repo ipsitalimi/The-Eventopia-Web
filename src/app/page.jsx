@@ -15,9 +15,13 @@ import {
   HelpCircle,
   Star,
   ArrowRight,
+  PartyPopper,
+  Flower2,
+  Briefcase,
   Instagram,
   MessageCircle,
   Phone,
+  Mail,
   Youtube,
   Menu,
   X,
@@ -625,7 +629,6 @@ export default function HomePage() {
 
               {/* Desktop Navigation Links */}
               {[
-                { name: "About", path: "/about" },
                 { name: "Contact", path: "/contact" },
                 { name: "Gallery", path: "/gallery" }
               ].map((item) => (
@@ -693,13 +696,6 @@ export default function HomePage() {
                 className="block text-center text-[#DC9B78] hover:text-[#F5EDED] transition-all duration-300 text-xl font-semibold py-3 px-4 rounded-lg bg-[#DC9B78]/10 backdrop-blur-sm border border-[#DC9B78]/20 hover:bg-[#DC9B78]/20 hover:border-[#DC9B78]/40 hover:shadow-[0_0_15px_rgba(220,155,120,0.3)]"
               >
                 Services
-              </Link>
-              <Link
-                to="/about"
-                onClick={() => setIsMobileDrawerOpen(false)}
-                className="block text-center text-[#DC9B78] hover:text-[#F5EDED] transition-all duration-300 text-xl font-semibold py-3 px-4 rounded-lg bg-[#DC9B78]/10 backdrop-blur-sm border border-[#DC9B78]/20 hover:bg-[#DC9B78]/20 hover:border-[#DC9B78]/40 hover:shadow-[0_0_15px_rgba(220,155,120,0.3)]"
-              >
-                About
               </Link>
               <Link
                 to="/contact"
@@ -1125,83 +1121,136 @@ export default function HomePage() {
         className="py-[40px] md:py-[80px] animate-fade-in-section bg-gradient-to-b from-[#0B0B0D] via-[#1C1C20] to-[#0B0B0D]"
       >
         <div className="max-w-[1200px] mx-auto px-[10%]">
-          <div className="text-center mb-16">
+          <div className="text-center mb-6 md:mb-16">
             <h2
-              className="text-4xl md:text-5xl font-bold mb-6 tracking-wide hero-title-gradient hero-shine-animation"
+              className="text-4xl md:text-5xl font-bold mb-3 md:mb-6 tracking-wide hero-title-gradient hero-shine-animation"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
               Celebrate Every Moment With Ease
           </h2>
-            <p className="text-lg text-[#F5EDED] mb-10 leading-relaxed max-w-2xl mx-auto">
+            <p className="text-lg text-[#F5EDED] mb-0 md:mb-10 leading-relaxed max-w-2xl mx-auto">
               Discover tailored event services designed to bring every celebration to life with elegance and creativity.
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-6 mb-16">
-            <div className="group relative rounded-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-300 cursor-pointer p-6 md:p-8">
-              <div className="text-center">
-                <div className="mb-4">
-                  <span className="bg-[#DC9B78] text-[#0B0B0D] px-3 md:px-4 py-1 rounded-full text-xs font-semibold transition-colors duration-300 inline-block">
-                    Personal Celebrations
-                  </span>
+
+          {/* Mobile: bordered editorial cards */}
+          <div className="md:hidden">
+            <div className="grid grid-cols-2 gap-3 mb-6">
+              {[
+                {
+                  title: "Personal Celebrations",
+                  description: "Birthdays • Anniversary • Baby Shower",
+                  Icon: PartyPopper,
+                },
+                {
+                  title: "Traditional & Ritual Decor",
+                  description: "Housewarming • Naming Ceremony • Haldi",
+                  Icon: Flower2,
+                },
+                {
+                  title: "Corporate Events",
+                  description: "Parties • Launches • Conferences",
+                  Icon: Briefcase,
+                },
+                {
+                  title: "Romantic Experiences",
+                  description: "Candlelight Dinners • Surprise Setups",
+                  Icon: Heart,
+                },
+              ].map(({ title, description, Icon }) => (
+                <div
+                  key={title}
+                  className="flex flex-col rounded-xl border border-[#DC9B78]/25 bg-[#0B0B0D]/40 p-3.5"
+                >
+                  <Icon className="w-5 h-5 text-[#DC9B78] mb-2.5 flex-shrink-0" strokeWidth={1.5} />
+                  <h3
+                    className="text-[15px] font-semibold text-[#F5EDED] leading-snug mb-1.5"
+                    style={{ fontFamily: "'Playfair Display', serif" }}
+                  >
+                    {title}
+                  </h3>
+                  <p className="text-[11px] text-[#DC9B78]/90 leading-relaxed mb-3 flex-1">
+                    {description}
+                  </p>
+                  <Link
+                    to="/services"
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-[#DC9B78] hover:text-[#F5EDED] transition-colors duration-300 mt-auto"
+                  >
+                    Explore
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
                 </div>
-                <h3 className="text-xl md:text-2xl font-semibold text-[#F5EDED] mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  Personal Celebrations
-                </h3>
-                <p className="text-[#DC9B78] text-xs md:text-base">
-                  Birthdays • Anniversary • Baby Shower
-                </p>
-              </div>
+              ))}
             </div>
-            <div className="group relative rounded-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-300 cursor-pointer p-6 md:p-8">
-              <div className="text-center">
-                <div className="mb-4">
-                  <span className="bg-[#DC9B78] text-[#0B0B0D] px-3 md:px-4 py-1 rounded-full text-xs font-semibold transition-colors duration-300 inline-block">
-                    Traditional & Ritual Decor
-                  </span>
-                </div>
-                <h3 className="text-xl md:text-2xl font-semibold text-[#F5EDED] mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  Traditional & Ritual Decor
-                </h3>
-                <p className="text-[#DC9B78] text-xs md:text-base">
-                  Housewarming • Naming Ceremony • Haldi
-                </p>
-              </div>
-          </div>
-            <div className="group relative rounded-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-300 cursor-pointer p-6 md:p-8">
-              <div className="text-center">
-                <div className="mb-4">
-                  <span className="bg-[#DC9B78] text-[#0B0B0D] px-3 md:px-4 py-1 rounded-full text-xs font-semibold transition-colors duration-300 inline-block">
-                    Corporate Events
-                  </span>
-                </div>
-                <h3 className="text-xl md:text-2xl font-semibold text-[#F5EDED] mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  Corporate Events
-                </h3>
-                <p className="text-[#DC9B78] text-xs md:text-base">
-                  Parties • Launches • Conferences
-                </p>
-              </div>
-            </div>
-            <div className="group relative rounded-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-300 cursor-pointer p-6 md:p-8">
-              <div className="text-center">
-                <div className="mb-4">
-                  <span className="bg-[#DC9B78] text-[#0B0B0D] px-3 md:px-4 py-1 rounded-full text-xs font-semibold transition-colors duration-300 inline-block">
-                    Romantic Experiences
-                  </span>
-                </div>
-                <h3 className="text-xl md:text-2xl font-semibold text-[#F5EDED] mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  Romantic Experiences
-                </h3>
-                <p className="text-[#DC9B78] text-xs md:text-base">
-                  Candlelight Dinners • Surprise Setups
-                </p>
-              </div>
+            <div className="text-center">
+              <Link
+                to="/services"
+                className="inline-flex items-center justify-center gap-2 hero-button-gradient hero-shine-animation px-8 py-3.5 rounded-full font-semibold text-sm hover:shadow-[0_0_30px_rgba(220,155,120,0.5)] transition-all duration-300"
+              >
+                View All Services
+                <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
           </div>
-          <div className="text-center mt-16">
-            <Link to="/services" className="inline-block hero-button-gradient hero-shine-animation px-10 py-5 rounded-full font-semibold text-base hover:shadow-[0_0_30px_rgba(220,155,120,0.5)] transition-all duration-300 transform hover:scale-105">
-              View All Services
-            </Link>
+
+          {/* Desktop / tablet: same bordered card design, larger scale */}
+          <div className="hidden md:block">
+            <div className="grid grid-cols-2 gap-6 mb-12">
+              {[
+                {
+                  title: "Personal Celebrations",
+                  description: "Birthdays • Anniversary • Baby Shower",
+                  Icon: PartyPopper,
+                },
+                {
+                  title: "Traditional & Ritual Decor",
+                  description: "Housewarming • Naming Ceremony • Haldi",
+                  Icon: Flower2,
+                },
+                {
+                  title: "Corporate Events",
+                  description: "Parties • Launches • Conferences",
+                  Icon: Briefcase,
+                },
+                {
+                  title: "Romantic Experiences",
+                  description: "Candlelight Dinners • Surprise Setups",
+                  Icon: Heart,
+                },
+              ].map(({ title, description, Icon }) => (
+                <div
+                  key={title}
+                  className="flex flex-col rounded-xl border border-[#DC9B78]/25 bg-[#0B0B0D]/40 p-8 hover:border-[#DC9B78]/45 transition-all duration-300"
+                >
+                  <Icon className="w-7 h-7 text-[#DC9B78] mb-4 flex-shrink-0" strokeWidth={1.5} />
+                  <h3
+                    className="text-2xl font-semibold text-[#F5EDED] leading-snug mb-2"
+                    style={{ fontFamily: "'Playfair Display', serif" }}
+                  >
+                    {title}
+                  </h3>
+                  <p className="text-base text-[#DC9B78]/90 leading-relaxed mb-5 flex-1">
+                    {description}
+                  </p>
+                  <Link
+                    to="/services"
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#DC9B78] hover:text-[#F5EDED] transition-colors duration-300 mt-auto"
+                  >
+                    Explore
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              ))}
+            </div>
+            <div className="text-center">
+              <Link
+                to="/services"
+                className="inline-flex items-center justify-center gap-2 hero-button-gradient hero-shine-animation px-10 py-5 rounded-full font-semibold text-base hover:shadow-[0_0_30px_rgba(220,155,120,0.5)] transition-all duration-300 transform hover:scale-105"
+              >
+                View All Services
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -1242,9 +1291,32 @@ export default function HomePage() {
               <p className="text-[#DC9B78] mb-3 text-sm font-medium">
                 Your celebration, our creation.
               </p>
-              <p className="text-[#F5EDED] text-sm leading-relaxed">
+              <p className="text-[#F5EDED] text-sm leading-relaxed mb-5">
                 Creating unforgettable moments with luxury and elegance.
               </p>
+              <div className="space-y-2 text-sm text-[#F5EDED]">
+                <a
+                  href="tel:+919266472229"
+                  className="flex items-center gap-2 hover:text-[#DC9B78] transition-colors duration-300"
+                >
+                  <Phone className="w-4 h-4 text-[#DC9B78] flex-shrink-0" />
+                  +91 92664 72229
+                </a>
+                <a
+                  href="tel:+919971899963"
+                  className="flex items-center gap-2 hover:text-[#DC9B78] transition-colors duration-300"
+                >
+                  <Phone className="w-4 h-4 text-[#DC9B78] flex-shrink-0" />
+                  +91 99718 99963
+                </a>
+                <a
+                  href="mailto:info@theeventopia.com"
+                  className="flex items-center gap-2 hover:text-[#DC9B78] transition-colors duration-300"
+                >
+                  <Mail className="w-4 h-4 text-[#DC9B78] flex-shrink-0" />
+                  info@theeventopia.com
+                </a>
+              </div>
             </div>
 
             {/* Social Media */}
@@ -1256,9 +1328,15 @@ export default function HomePage() {
                 Follow Us
               </h4>
               <div className="flex space-x-4">
-                <div className="w-12 h-12 bg-[#1C1C20] border border-[#DC9B78]/40 rounded-full flex items-center justify-center cursor-pointer hover:border-[#DC9B78] hover:bg-[#DC9B78] hover:shadow-lg hover:shadow-[#DC9B78]/50 transition-all duration-300">
-                  <Instagram className="w-5 h-5 text-[#DC9B78] hover:text-[#0B0B0D] transition-colors duration-300" />
-                </div>
+                <a
+                  href="https://www.instagram.com/theeventopia"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Follow The Eventopia on Instagram"
+                  className="w-12 h-12 bg-[#1C1C20] border border-[#DC9B78]/40 rounded-full flex items-center justify-center hover:border-[#DC9B78] hover:bg-[#DC9B78] hover:shadow-lg hover:shadow-[#DC9B78]/50 transition-all duration-300 group"
+                >
+                  <Instagram className="w-5 h-5 text-[#DC9B78] group-hover:text-[#0B0B0D] transition-colors duration-300" />
+                </a>
                 <div className="w-12 h-12 bg-[#1C1C20] border border-[#DC9B78]/40 rounded-full flex items-center justify-center cursor-pointer hover:border-[#DC9B78] hover:bg-[#DC9B78] hover:shadow-lg hover:shadow-[#DC9B78]/50 transition-all duration-300">
                   <MessageCircle className="w-5 h-5 text-[#DC9B78] hover:text-[#0B0B0D] transition-colors duration-300" />
                 </div>

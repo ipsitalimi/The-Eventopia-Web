@@ -157,13 +157,6 @@ export default function GalleryPage() {
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#DC9B78] group-hover:w-full transition-all duration-300"></span>
               </Link>
               <Link
-                to="/about"
-                className="text-[#DC9B78] hover:text-[#F5EDED] transition-all duration-300 relative pb-2 group"
-              >
-                <span className="text-xl font-semibold tracking-wide">About</span>
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#DC9B78] group-hover:w-full transition-all duration-300"></span>
-              </Link>
-              <Link
                 to="/contact"
                 className="text-[#DC9B78] hover:text-[#F5EDED] transition-all duration-300 relative pb-2 group"
               >
@@ -212,11 +205,11 @@ export default function GalleryPage() {
         className="py-8 md:py-24 animate-fade-in-section bg-gradient-to-b from-[#0B0B0D] via-[#1C1C20] to-[#0B0B0D]"
       >
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 lg:gap-8">
             {GALLERY_IMAGES.map((item) => (
               <div
                 key={item.id}
-                className="group bg-[#1C1C20] rounded-lg overflow-hidden border border-[#DC9B78]/20 hover:border-[#DC9B78]/60 hover:shadow-lg hover:shadow-[#DC9B78]/20 transition-all duration-300"
+                className="group relative rounded-lg overflow-hidden border border-[#DC9B78]/20 hover:border-[#DC9B78]/60 hover:shadow-lg hover:shadow-[#DC9B78]/20 transition-all duration-300"
               >
                 <div className="aspect-square w-full overflow-hidden bg-[#0B0B0D]">
                   <img
@@ -225,7 +218,7 @@ export default function GalleryPage() {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
-                <div className="p-4 text-center">
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/75 via-black/35 to-transparent pt-10 pb-3 px-2 md:px-3 text-center pointer-events-none">
                   <p className="text-sm md:text-base text-[#DC9B78] font-medium leading-relaxed">
                     {item.caption}
                   </p>

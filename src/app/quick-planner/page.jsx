@@ -15,8 +15,8 @@ export default function QuickPlannerPage() {
   }, []);
 
   const handleComplete = (formData) => {
-    console.log("Form completed:", formData);
-    // Here you can add API call to submit the form data
+    // Submission + notifications are handled inside QuickPlannerForm via /api/planner
+    console.log("Planner submitted:", formData);
   };
 
   const handleStartOver = () => {

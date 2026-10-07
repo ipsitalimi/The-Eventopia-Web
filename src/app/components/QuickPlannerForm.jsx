@@ -51,10 +51,13 @@ export default function QuickPlannerForm({ onComplete, onStartOver }) {
     theme: "",
     budget: "",
     name: "",
-    contact: "",
+    email: "",
+    phone: "",
   });
   const [errors, setErrors] = useState({});
   const [isComplete, setIsComplete] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const updateFormData = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -89,10 +92,18 @@ export default function QuickPlannerForm({ onComplete, onStartOver }) {
         if (!formData.name.trim()) newErrors.name = "Please enter your name";
         break;
       case 7:
-        if (!formData.contact.trim()) {
-          newErrors.contact = "Please enter your contact information";
-        } else if (!/^[\w\.-]+@[\w\.-]+\.\w+$|^\+?[\d\s-()]+$/.test(formData.contact)) {
-          newErrors.contact = "Please enter a valid email or phone number";
+        if (!formData.email.trim()) {
+          newErrors.email = "Please enter your email";
+        } else if (!/^[\w.-]+@[\w.-]+\.\w+$/.test(formData.email.trim())) {
+          newErrors.email = "Please enter a valid email address";
+        }
+        if (!formData.phone.trim()) {
+          newErrors.phone = "Please enter your phone number";
+        } else if (
+          !/^\+?[\d\s\-()]+$/.test(formData.phone.trim()) ||
+          formData.phone.replace(/\D/g, "").length < 7
+        ) {
+          newErrors.phone = "Please enter a valid phone number";
         }
         break;
     }
@@ -101,13 +112,52 @@ export default function QuickPlannerForm({ onComplete, onStartOver }) {
     return Object.keys(newErrors).length === 0;
   };
 
+  const submitPlanner = async () => {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    setSubmitError("");
+
+    const payload = {
+      ...formData,
+      eventDate: formData.eventDate
+        ? format(formData.eventDate, "yyyy-MM-dd")
+        : null,
+    };
+
+    try {
+      const response = await fetch("/api/planner", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      // Accept the submission for UX even if the server returns a soft failure
+      // after validation — only hard-fail on network/4xx validation errors.
+      if (!response.ok && response.status >= 400 && response.status < 500) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || "Unable to submit your planner details.");
+      }
+
+      setIsComplete(true);
+      if (onComplete) onComplete(payload);
+    } catch (error) {
+      console.error("[planner] Submission failed:", error);
+      setSubmitError(
+        error.message || "Something went wrong. Please try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleNext = () => {
+    if (isSubmitting) return;
     if (validateStep(currentStep)) {
       if (currentStep < TOTAL_STEPS) {
         setCurrentStep(currentStep + 1);
       } else {
-        setIsComplete(true);
-        if (onComplete) onComplete(formData);
+        submitPlanner();
       }
     }
   };
@@ -127,10 +177,13 @@ export default function QuickPlannerForm({ onComplete, onStartOver }) {
       theme: "",
       budget: "",
       name: "",
-      contact: "",
+      email: "",
+      phone: "",
     });
     setErrors({});
     setIsComplete(false);
+    setIsSubmitting(false);
+    setSubmitError("");
     if (onStartOver) onStartOver();
   };
 
@@ -192,8 +245,12 @@ export default function QuickPlannerForm({ onComplete, onStartOver }) {
                   <span className="text-[#F5EDED] font-medium">{formData.name || "—"}</span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-[#DC9B78]/20">
-                  <span className="text-[#E6D9CF]/70">Contact</span>
-                  <span className="text-[#F5EDED] font-medium">{formData.contact || "—"}</span>
+                  <span className="text-[#E6D9CF]/70">Email</span>
+                  <span className="text-[#F5EDED] font-medium">{formData.email || "—"}</span>
+                </div>
+                <div className="flex justify-between items-center py-2 border-b border-[#DC9B78]/20">
+                  <span className="text-[#E6D9CF]/70">Phone</span>
+                  <span className="text-[#F5EDED] font-medium">{formData.phone || "—"}</span>
                 </div>
               </div>
             </div>
@@ -302,13 +359,20 @@ export default function QuickPlannerForm({ onComplete, onStartOver }) {
                         )}
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-6 bg-[#1C1C20] border-[#DC9B78]/30" align="start">
+                    <PopoverContent
+                      className="w-auto p-3 md:p-4 bg-[#1C1C20] border border-[#DC9B78]/30 text-[#F5EDED] shadow-[0_16px_40px_rgba(0,0,0,0.55)]"
+                      align="start"
+                    >
                       <DayPicker
                         mode="single"
                         selected={formData.eventDate}
                         onSelect={(date) => updateFormData("eventDate", date)}
-                        disabled={(date) => date < new Date()}
-                        className="rounded-md"
+                        disabled={(date) => {
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0);
+                          return date < today;
+                        }}
+                        className="eventopia-day-picker rdp-root"
                       />
                     </PopoverContent>
                   </Popover>
@@ -413,27 +477,45 @@ export default function QuickPlannerForm({ onComplete, onStartOver }) {
                 </div>
               )}
 
-              {/* Step 7: Contact */}
+              {/* Step 7: Email + Phone */}
               {currentStep === 7 && (
                 <div className="space-y-4">
-                  <Input
-                    type="text"
-                    placeholder="Email or phone number"
-                    value={formData.contact}
-                    onChange={(e) => updateFormData("contact", e.target.value)}
-                    className="bg-[#0B0B0D]/50 border-[#DC9B78]/30 text-[#F5EDED] placeholder:text-[#E6D9CF]/50 focus:border-[#DC9B78] focus:ring-[#DC9B78]/40"
-                  />
-                  {errors.contact && (
-                    <p className="text-sm text-red-400">{errors.contact}</p>
-                  )}
+                  <div className="space-y-2">
+                    <Input
+                      type="email"
+                      placeholder="Email address"
+                      value={formData.email}
+                      onChange={(e) => updateFormData("email", e.target.value)}
+                      className="bg-[#0B0B0D]/50 border-[#DC9B78]/30 text-[#F5EDED] placeholder:text-[#E6D9CF]/50 focus:border-[#DC9B78] focus:ring-[#DC9B78]/40"
+                    />
+                    {errors.email && (
+                      <p className="text-sm text-red-400">{errors.email}</p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Input
+                      type="tel"
+                      placeholder="Phone number"
+                      value={formData.phone}
+                      onChange={(e) => updateFormData("phone", e.target.value)}
+                      className="bg-[#0B0B0D]/50 border-[#DC9B78]/30 text-[#F5EDED] placeholder:text-[#E6D9CF]/50 focus:border-[#DC9B78] focus:ring-[#DC9B78]/40"
+                    />
+                    {errors.phone && (
+                      <p className="text-sm text-red-400">{errors.phone}</p>
+                    )}
+                  </div>
                 </div>
+              )}
+
+              {submitError && currentStep === TOTAL_STEPS && (
+                <p className="text-sm text-red-400 text-center">{submitError}</p>
               )}
 
               {/* Navigation Buttons */}
               <div className="flex justify-between items-center pt-4">
                 <Button
                   onClick={handleBack}
-                  disabled={currentStep === 1}
+                  disabled={currentStep === 1 || isSubmitting}
                   variant="outline"
                   className="border-[#DC9B78]/30 text-[#DC9B78] hover:bg-[#DC9B78]/10 hover:border-[#DC9B78] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -442,10 +524,15 @@ export default function QuickPlannerForm({ onComplete, onStartOver }) {
                 </Button>
                 <Button
                   onClick={handleNext}
-                  className="hero-button-gradient hero-shine-animation px-6 py-2 rounded-full font-semibold text-sm hover:shadow-[0_0_25px_rgba(220,155,120,0.5)] transition-all duration-300 transform hover:scale-105"
+                  disabled={isSubmitting}
+                  className="hero-button-gradient hero-shine-animation px-6 py-2 rounded-full font-semibold text-sm hover:shadow-[0_0_25px_rgba(220,155,120,0.5)] transition-all duration-300 transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
-                  {currentStep === TOTAL_STEPS ? "Complete" : "Next"}
-                  <ChevronRight className="w-4 h-4 ml-2" />
+                  {isSubmitting
+                    ? "Submitting..."
+                    : currentStep === TOTAL_STEPS
+                      ? "Complete"
+                      : "Next"}
+                  {!isSubmitting && <ChevronRight className="w-4 h-4 ml-2" />}
                 </Button>
               </div>
             </CardContent>

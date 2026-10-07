@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router";
-import { Phone, MapPin } from "lucide-react";
+import { Phone, MapPin, Mail, Instagram } from "lucide-react";
 
 export default function ContactPage() {
   const [scrollY, setScrollY] = useState(0);
@@ -11,6 +11,9 @@ export default function ContactPage() {
     email: "",
     message: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null); // "success" | "error" | null
+  const [submitError, setSubmitError] = useState("");
   const sectionRefs = useRef([]);
 
   useEffect(() => {
@@ -51,12 +54,37 @@ export default function ContactPage() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log("Form submitted:", formData);
-    // Reset form
-    setFormData({ name: "", email: "", message: "" });
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    setSubmitStatus(null);
+    setSubmitError("");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.error || "Unable to send your message.");
+      }
+
+      setSubmitStatus("success");
+      setFormData({ name: "", email: "", message: "" });
+    } catch (error) {
+      console.error("[contact] Submission failed:", error);
+      setSubmitStatus("error");
+      setSubmitError(
+        error.message || "Something went wrong. Please try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Google Maps embed URL for the address
@@ -98,13 +126,6 @@ export default function ContactPage() {
                 className="text-[#DC9B78] hover:text-[#F5EDED] transition-all duration-300 relative pb-2 group"
               >
                 <span className="text-xl font-semibold tracking-wide">Services</span>
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#DC9B78] group-hover:w-full transition-all duration-300"></span>
-              </Link>
-              <Link
-                to="/about"
-                className="text-[#DC9B78] hover:text-[#F5EDED] transition-all duration-300 relative pb-2 group"
-              >
-                <span className="text-xl font-semibold tracking-wide">About</span>
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#DC9B78] group-hover:w-full transition-all duration-300"></span>
               </Link>
               <Link
@@ -166,13 +187,38 @@ export default function ContactPage() {
                   <h3 className="text-lg md:text-xl font-bold text-[#DC9B78] mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
                     Get in touch:
                   </h3>
-                  <a
-                    href="tel:+919971899963"
-                    className="text-base md:text-lg text-[#F5EDED] hover:text-[#DC9B78] transition-colors duration-300 flex items-center gap-2"
-                  >
-                    <Phone className="w-5 h-5 text-[#DC9B78]" />
-                    +91 9971899963
-                  </a>
+                  <div className="space-y-2">
+                    <a
+                      href="tel:+919266472229"
+                      className="text-base md:text-lg text-[#F5EDED] hover:text-[#DC9B78] transition-colors duration-300 flex items-center gap-2"
+                    >
+                      <Phone className="w-5 h-5 text-[#DC9B78]" />
+                      +91 92664 72229
+                    </a>
+                    <a
+                      href="tel:+919971899963"
+                      className="text-base md:text-lg text-[#F5EDED] hover:text-[#DC9B78] transition-colors duration-300 flex items-center gap-2"
+                    >
+                      <Phone className="w-5 h-5 text-[#DC9B78]" />
+                      +91 99718 99963
+                    </a>
+                    <a
+                      href="mailto:info@theeventopia.com"
+                      className="text-base md:text-lg text-[#F5EDED] hover:text-[#DC9B78] transition-colors duration-300 flex items-center gap-2"
+                    >
+                      <Mail className="w-5 h-5 text-[#DC9B78]" />
+                      info@theeventopia.com
+                    </a>
+                    <a
+                      href="https://www.instagram.com/theeventopia"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-base md:text-lg text-[#F5EDED] hover:text-[#DC9B78] transition-colors duration-300 flex items-center gap-2"
+                    >
+                      <Instagram className="w-5 h-5 text-[#DC9B78]" />
+                      @theeventopia
+                    </a>
+                  </div>
                 </div>
 
                 <div>
@@ -183,6 +229,15 @@ export default function ContactPage() {
                     <MapPin className="w-5 h-5 text-[#DC9B78] mt-1 flex-shrink-0" />
                     <span>LG 7, Ground Floor, Amrapali Royal Market Vaibhav Khand Indirapuram, Ghaziabad, UP, 201014.</span>
                   </p>
+                </div>
+
+                <div>
+                  <Link
+                    to="/quick-planner"
+                    className="inline-block border-2 border-[#DC9B78]/60 text-[#DC9B78] px-8 py-3 rounded-full font-semibold text-sm md:text-base hover:bg-[#DC9B78]/10 hover:border-[#DC9B78] hover:shadow-[0_0_30px_rgba(220,155,120,0.4)] transition-all duration-300 transform hover:scale-105"
+                  >
+                    Try Our 30-Second Planner
+                  </Link>
                 </div>
               </div>
             </div>
@@ -252,12 +307,24 @@ export default function ContactPage() {
                 ></textarea>
               </div>
 
+              {submitStatus === "success" && (
+                <p className="text-sm text-[#DC9B78] text-center md:text-left">
+                  Thanks! Your message has been sent. We&apos;ll get back to you soon.
+                </p>
+              )}
+              {submitStatus === "error" && (
+                <p className="text-sm text-red-400 text-center md:text-left">
+                  {submitError}
+                </p>
+              )}
+
               <div className="flex justify-center md:justify-start">
                 <button
                   type="submit"
-                  className="hero-button-gradient hero-shine-animation px-10 py-4 rounded-full font-semibold text-base md:text-lg hover:shadow-[0_0_40px_rgba(220,155,120,0.6)] transition-all duration-300 transform hover:scale-105"
+                  disabled={isSubmitting}
+                  className="hero-button-gradient hero-shine-animation px-10 py-4 rounded-full font-semibold text-base md:text-lg hover:shadow-[0_0_40px_rgba(220,155,120,0.6)] transition-all duration-300 transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
-                  Send Message
+                  {isSubmitting ? "Sending..." : "Send Message"}
                 </button>
               </div>
             </form>
