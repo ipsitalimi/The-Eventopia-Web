@@ -1,0 +1,4 @@
+{
+  "framework": "react-router",
+  "$schema": "https://openapi.vercel.sh/vercel.json"
+}

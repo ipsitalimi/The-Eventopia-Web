@@ -13,9 +13,23 @@ import { nextPublicProcessEnv } from './plugins/nextPublicProcessEnv';
 import { restart } from './plugins/restart';
 import { restartEnvFileChange } from './plugins/restartEnvFileChange';
 
-export default defineConfig({
+export default defineConfig(({ isSsrBuild, command }) => ({
   // Keep them available via import.meta.env.NEXT_PUBLIC_*
   envPrefix: 'NEXT_PUBLIC_',
+  build: {
+    // SSR/server bundle needs top-level await (Node on Vercel).
+    // Client/browser target stays at Vite's default.
+    ...(isSsrBuild
+      ? {
+          target: 'node20' as const,
+          // Web Fetch handler — works on Vercel Functions and avoids
+          // createHonoServer's production serve() side effect during builds.
+          rollupOptions: {
+            input: './server/app.ts',
+          },
+        }
+      : {}),
+  },
   optimizeDeps: {
     // Explicitly include fast-glob, since it gets dynamically imported and we
     // don't want that to cause a re-bundle.
@@ -35,10 +49,12 @@ export default defineConfig({
   plugins: [
     nextPublicProcessEnv(),
     restartEnvFileChange(),
-    reactRouterHonoServer({
-      serverEntryPoint: './__create/index.ts',
-      runtime: 'node',
-    }),
+    // Local Vite dev server only — production SSR uses server/app.ts.
+    command === 'serve' &&
+      reactRouterHonoServer({
+        serverEntryPoint: './__create/index.ts',
+        runtime: 'node',
+      }),
     babel({
       include: ['src/**/*.{js,jsx,ts,tsx}'], // or RegExp: /src\/.*\.[tj]sx?$/
       exclude: /node_modules/, // skip everything else
@@ -65,7 +81,7 @@ export default defineConfig({
     tsconfigPaths(),
     aliases(),
     layoutWrapperPlugin(),
-  ],
+  ].filter(Boolean),
   resolve: {
     alias: {
       lodash: 'lodash-es',
@@ -89,4 +105,4 @@ export default defineConfig({
       clientFiles: ['./src/app/**/*', './src/app/root.tsx', './src/app/routes.ts'],
     },
   },
-});
+}));

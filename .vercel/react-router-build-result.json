@@ -1,0 +1,183 @@
+{
+  "buildManifest": {
+    "serverBundles": {
+      "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0": {
+        "id": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+        "file": "build/server/nodejs_eyJydW50aW1lIjoibm9kZWpzIn0/index.js",
+        "config": {
+          "runtime": "nodejs"
+        }
+      }
+    },
+    "routeIdToServerBundleId": {
+      "page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "contact/page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "gallery/page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "quick-planner/page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "services/page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "__create/not-found": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0"
+    },
+    "routes": {
+      "root": {
+        "id": "root",
+        "file": "src/app/root.tsx",
+        "path": "",
+        "config": {}
+      },
+      "page": {
+        "id": "page",
+        "parentId": "root",
+        "file": "src/app/page.jsx",
+        "index": true,
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "contact/page": {
+        "id": "contact/page",
+        "parentId": "root",
+        "file": "src/app/contact/page.jsx",
+        "path": "contact",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "gallery/page": {
+        "id": "gallery/page",
+        "parentId": "root",
+        "file": "src/app/gallery/page.jsx",
+        "path": "gallery",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "quick-planner/page": {
+        "id": "quick-planner/page",
+        "parentId": "root",
+        "file": "src/app/quick-planner/page.jsx",
+        "path": "quick-planner",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "services/page": {
+        "id": "services/page",
+        "parentId": "root",
+        "file": "src/app/services/page.jsx",
+        "path": "services",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "__create/not-found": {
+        "id": "__create/not-found",
+        "parentId": "root",
+        "file": "src/app/__create/not-found.tsx",
+        "path": "*?",
+        "config": {
+          "runtime": "nodejs"
+        }
+      }
+    }
+  },
+  "reactRouterConfig": {
+    "appDirectory": "/Users/aaravjha_2010/The-Eventopia-Web/src/app",
+    "basename": "/",
+    "buildDirectory": "/Users/aaravjha_2010/The-Eventopia-Web/build",
+    "future": {
+      "v8_middleware": false,
+      "unstable_optimizeDeps": false,
+      "unstable_splitRouteModules": false,
+      "unstable_subResourceIntegrity": false,
+      "unstable_viteEnvironmentApi": false
+    },
+    "routes": {
+      "root": {
+        "id": "root",
+        "file": "root.tsx",
+        "path": ""
+      },
+      "page": {
+        "id": "page",
+        "parentId": "root",
+        "file": "./page.jsx",
+        "index": true
+      },
+      "contact/page": {
+        "id": "contact/page",
+        "parentId": "root",
+        "file": "./contact/page.jsx",
+        "path": "contact"
+      },
+      "gallery/page": {
+        "id": "gallery/page",
+        "parentId": "root",
+        "file": "./gallery/page.jsx",
+        "path": "gallery"
+      },
+      "quick-planner/page": {
+        "id": "quick-planner/page",
+        "parentId": "root",
+        "file": "./quick-planner/page.jsx",
+        "path": "quick-planner"
+      },
+      "services/page": {
+        "id": "services/page",
+        "parentId": "root",
+        "file": "./services/page.jsx",
+        "path": "services"
+      },
+      "__create/not-found": {
+        "id": "__create/not-found",
+        "parentId": "root",
+        "file": "./__create/not-found.tsx",
+        "path": "*?"
+      }
+    },
+    "routeDiscovery": {
+      "mode": "lazy",
+      "manifestPath": "/__manifest"
+    },
+    "serverBuildFile": "index.js",
+    "serverModuleFormat": "esm",
+    "ssr": true,
+    "unstable_routeConfig": [
+      {
+        "id": "root",
+        "path": "",
+        "file": "root.tsx",
+        "children": [
+          {
+            "file": "./page.jsx",
+            "index": true
+          },
+          {
+            "file": "./contact/page.jsx",
+            "path": "contact"
+          },
+          {
+            "file": "./gallery/page.jsx",
+            "path": "gallery"
+          },
+          {
+            "file": "./quick-planner/page.jsx",
+            "path": "quick-planner"
+          },
+          {
+            "file": "./services/page.jsx",
+            "path": "services"
+          },
+          {
+            "file": "./__create/not-found.tsx",
+            "path": "*?"
+          }
+        ]
+      }
+    ]
+  },
+  "viteConfig": {
+    "build": {
+      "assetsDir": "assets"
+    }
+  }
+}
