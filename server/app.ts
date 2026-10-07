@@ -14,6 +14,6 @@ const app = createApp();
 
 const handler = createRequestHandler(build);
 
-app.all('*', (c) => handler(c.req.raw));
+app.all('/*', (c) => handler(c.req.raw));
 
 export default app.fetch;
